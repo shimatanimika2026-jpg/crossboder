@@ -70,7 +70,8 @@ fi
 # ─── 2. Lint 检查 ──────────────────────────────────────────────────
 _step "Lint 检查  pnpm run lint"
 if pnpm run lint > /tmp/vr-lint.log 2>&1; then
-  LINT_FILES=$(grep -oP 'Checked \K[0-9]+' /tmp/vr-lint.log || echo "?")
+  LINT_FILES=$(sed -n 's/.*Checked \([0-9][0-9]*\) files.*/\1/p' /tmp/vr-lint.log | head -1)
+  LINT_FILES=${LINT_FILES:-?}
   _ok "Lint 通过（${LINT_FILES} 个文件，0 错误）"
 else
   _fail "Lint 检查失败"

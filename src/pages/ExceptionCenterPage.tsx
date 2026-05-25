@@ -73,6 +73,12 @@ export default function ExceptionCenterPage() {
 
   const loadUsers = async () => {
     try {
+      if (runtimeMode === 'demo' || !supabase) {
+        setUsersMap(new Map());
+        setAvailableOwners([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('id, full_name, username, email')

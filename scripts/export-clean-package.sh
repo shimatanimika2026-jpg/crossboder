@@ -13,6 +13,14 @@ create_zip() {
   local source_dir="$1"
   local output_zip="$2"
 
+  if command -v ditto >/dev/null 2>&1; then
+    (
+      cd "$(dirname "${source_dir}")"
+      ditto -c -k --keepParent "$(basename "${source_dir}")" "${output_zip}"
+    )
+    return
+  fi
+
   if command -v zip >/dev/null 2>&1; then
     (
       cd "$(dirname "${source_dir}")"
@@ -46,9 +54,23 @@ rm -rf "${EXPORT_DIR}"
 mkdir -p "${STAGE_DIR}"
 
 cd "${PROJECT_ROOT}"
-git archive HEAD --format=zip -o "${ARCHIVE_TMP}"
-unzip -q "${ARCHIVE_TMP}" -d "${STAGE_DIR}"
-rm -f "${ARCHIVE_TMP}"
+rsync -a \
+  --exclude='.git/' \
+  --exclude='node_modules/' \
+  --exclude='dist/' \
+  --exclude='.dist/' \
+  --exclude='dist-ssr/' \
+  --exclude='output/' \
+  --exclude='export/' \
+  --exclude='coverage/' \
+  --exclude='performance-reports/' \
+  --exclude='test-results/' \
+  --exclude='playwright-report/' \
+  --exclude='.sync/' \
+  --exclude='history/' \
+  --exclude='*.tsbuildinfo' \
+  --exclude='*.local' \
+  ./ "${STAGE_DIR}/"
 
 find "${STAGE_DIR}" -maxdepth 5 -name ".git" -type d -exec rm -rf {} + 2>/dev/null || true
 
@@ -108,8 +130,8 @@ done
 cat > "${STAGE_DIR}/MANIFEST.txt" <<EOF
 package: ${PACKAGE_NAME}
 generated_at_utc: $(date -u '+%Y-%m-%dT%H:%M:%SZ')
-source_commit: $(git rev-parse HEAD 2>/dev/null || echo unknown)
-export_method: git archive + cleanup + zip verification
+source_commit: $(git rev-parse HEAD 2>/dev/null || echo unknown)$(if ! git diff --quiet --ignore-submodules -- || ! git diff --cached --quiet --ignore-submodules --; then echo "-dirty"; fi)
+export_method: working tree copy + cleanup + zip verification
 EOF
 
 create_zip "${STAGE_DIR}" "${PACKAGE_PATH}"

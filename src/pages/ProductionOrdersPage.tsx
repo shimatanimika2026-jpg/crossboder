@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/db/supabase';
+import { runtimeMode, supabase } from '@/db/supabase';
 import type { ProductionOrder } from '@/types/database';
 
 export default function ProductionOrdersPage() {
@@ -36,6 +36,11 @@ export default function ProductionOrdersPage() {
 
     setLoading(true);
     try {
+      if (runtimeMode === 'demo' || !supabase) {
+        setOrders([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('production_orders')
         .select('*')

@@ -457,10 +457,10 @@ export default function AssemblyCompletePage() {
                     </TableCell>
                     <TableCell>
                       {canCreateAgingTask(unit) ? (
-                        <Button size="sm" variant="outline" disabled>
-                          <CheckCircle className="mr-2 h-4 w-4" />
+                        <Badge variant="outline" className="gap-2 py-1.5">
+                          <CheckCircle className="h-4 w-4" />
                           Aging Ready
-                        </Button>
+                        </Badge>
                       ) : (
                         <span className="text-sm text-muted-foreground">No action</span>
                       )}

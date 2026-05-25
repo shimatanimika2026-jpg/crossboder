@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@/db/supabase';
+import { runtimeMode, supabase } from '@/db/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,11 @@ export default function SystemPage() {
   const loadUsers = async () => {
     setLoading(true);
     try {
+      if (runtimeMode === 'demo' || !supabase) {
+        setUsers([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -45,6 +50,11 @@ export default function SystemPage() {
   };
 
   const updateUserStatus = async (userId: string, status: string) => {
+    if (runtimeMode === 'demo' || !supabase) {
+      toast.info('Demo 模式下无法更新用户状态');
+      return;
+    }
+
     setUpdating(userId);
     try {
       const { error } = await supabase
@@ -65,6 +75,11 @@ export default function SystemPage() {
   };
 
   const updateUserRole = async (userId: string, role: string) => {
+    if (runtimeMode === 'demo' || !supabase) {
+      toast.info('Demo 模式下无法更新用户角色');
+      return;
+    }
+
     setUpdating(userId);
     try {
       const { error } = await supabase

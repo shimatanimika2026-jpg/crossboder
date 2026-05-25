@@ -11,7 +11,7 @@ fi
 PROJECT_ROOT="${PROJECT_ROOT:-$(pwd)}"
 OUT_DIR="${PROJECT_ROOT}/.dist"
 
-OUTPUT=$(npx vite build --minify false --logLevel error --outDir "$OUT_DIR" 2>&1)
+OUTPUT=$(pnpm exec vite build --minify false --logLevel error --outDir "$OUT_DIR" 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then
