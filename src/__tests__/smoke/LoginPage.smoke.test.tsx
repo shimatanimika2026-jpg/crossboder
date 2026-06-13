@@ -44,4 +44,10 @@ describe('LoginPage Smoke Test', () => {
     expect(screen.getByText('还没有账户？')).toBeInTheDocument();
     expect(screen.getByText('立即注册')).toBeInTheDocument();
   });
+
+  it('should not show development test accounts by default', () => {
+    render(<LoginPage />);
+
+    expect(screen.queryByText('测试账号（开发环境）')).not.toBeInTheDocument();
+  });
 });
