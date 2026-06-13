@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
-import { isDemoMode } from '@/lib/runtime-config';
+import { isDemoMode, shouldShowDevTestAccounts } from '@/lib/runtime-config';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -69,6 +69,7 @@ function RealLoginCard() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+  const showDevTestAccounts = shouldShowDevTestAccounts();
 
   const validateUsername = (value: string) => /^[a-zA-Z0-9_]+$/.test(value);
 
@@ -111,7 +112,7 @@ function RealLoginCard() {
   return (
     <>
       {/* 测试账号提示（登录模式） */}
-      {isLogin && (
+      {isLogin && showDevTestAccounts && (
         <Alert className="border-primary/20 bg-primary/5">
           <Info className="h-4 w-4 text-primary" />
           <AlertDescription className="text-sm">
