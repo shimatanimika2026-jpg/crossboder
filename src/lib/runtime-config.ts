@@ -19,7 +19,7 @@ function getProcessEnv(): Record<string, string | undefined> | undefined {
   }).process?.env;
 }
 
-function getEnvValue(key: 'VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY'): string {
+function getEnvValue(key: 'VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY' | 'VITE_SHOW_DEV_TEST_ACCOUNTS'): string {
   const processEnv = getProcessEnv();
   if (processEnv?.[key]) {
     return processEnv[key] || '';
@@ -31,6 +31,10 @@ function getEnvValue(key: 'VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY'): strin
 
   if (key === 'VITE_SUPABASE_ANON_KEY') {
     return import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  }
+
+  if (key === 'VITE_SHOW_DEV_TEST_ACCOUNTS') {
+    return import.meta.env.VITE_SHOW_DEV_TEST_ACCOUNTS || '';
   }
 
   return '';
@@ -76,4 +80,8 @@ export function getMissingEnvKeys(): string[] {
 
 export function getConfigErrorMessage(): string {
   return getRuntimeConfig().supabaseConfigErrorMessage;
+}
+
+export function shouldShowDevTestAccounts(): boolean {
+  return getEnvValue('VITE_SHOW_DEV_TEST_ACCOUNTS') === 'true';
 }
